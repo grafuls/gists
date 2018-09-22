@@ -25,7 +25,7 @@ requirements = ['requests == 2.19.1', 'clint == 0.3.1', 'urllib3']
 if sys.version_info < (2, 7):
     requirements.append('argparse')
 elif sys.version_info < (2, 6):
-    raise Exception('Must use python 2.6 or greater')
+    raise Exception('Must use python 3.6 or greater')
 
 setup(name='gists',
       packages=['gists'],
@@ -42,8 +42,7 @@ setup(name='gists',
       test_suite='tests',
       classifiers=[
           "Programming Language :: Python",
-          "Programming Language :: Python :: 2.6",
-          "Programming Language :: Python :: 2.7",
+          "Programming Language :: Python :: 3.6",
           "Development Status :: 5 - Production/Stable ",
           "Environment :: Console",
           "Intended Audience :: Developers",
