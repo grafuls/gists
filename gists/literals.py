@@ -39,7 +39,7 @@ DOWNLOAD_MORE_FILES = ("Gist has more than one file. "
                        """Specify file by '-f' option. Available values are
                        [%s] """)
 
-FILE_NOT_FOUND = ("File not found in gist. Available values are [%s])")
+FILE_NOT_FOUND = "File not found in gist. Available values are [%s])"
 
 DOWNLOAD_ERROR = "Can not download gist file. Github reason: '%s'"
 
@@ -49,7 +49,7 @@ UNHANDLED_EXCEPTION = "Unhandled exception"
 
 DELETE_CONFIRMATION = "Are you sure you want to delete gist %s [yN]"
 
-DELETE_OK = "Gist '%s' deleted succesfully"
+DELETE_OK = "Gist '%s' deleted successfully"
 
 DELETE_NOK = "Can not delete the gist. Github reason: '%s'"
 
@@ -82,10 +82,10 @@ AUTHORIZE_NOK = "Could not get an authorization token. Github reason: '%s'"
 
 FORK_ERROR = "Can not fork the gist '%s'. Github reason: '%s'"
 
-STAR_OK = "Gist '%s' starred succesfully"
+STAR_OK = "Gist '%s' starred successfully"
 
 STAR_NOK = "Can not star the gist. Github reason: '%s'"
 
-UNSTAR_OK = "Gist '%s' unstarred succesfully"
+UNSTAR_OK = "Gist '%s' unstarred successfully"
 
 UNSTAR_NOK = "Can not unstar the gist. Github reason: '%s'"

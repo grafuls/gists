@@ -30,10 +30,9 @@ base64 encoding, 'requests' module encapsulation, result data model, etc...
 
 import json
 import requests
-import urllib2
 import os
-import literals
-import ConfigParser
+import literals as literals
+from configparser import ConfigParser
 from clint.textui import colored
 
 
@@ -82,7 +81,7 @@ class GithubFacade(object):
 
         """
         # Set the URL
-        url = self.ENDPOINT_LIST % (username)
+        url = self.ENDPOINT_LIST % username
 
         if self.basic_auth and self.credential:
             return requests.get(url, auth=(self.username, self.credential))
@@ -93,7 +92,7 @@ class GithubFacade(object):
                 params = {'access_token': self.credential}
             return requests.get(url, params=params)
 
-    def request_list_starred_gists(self, username):
+    def request_list_starred_gists(self):
         """ Call to get a list of gists for user.
 
         """
@@ -116,7 +115,7 @@ class GithubFacade(object):
         """
 
         # Set the URL and send the request
-        url = self.ENDPOINT_GIST % (id_gist)
+        url = self.ENDPOINT_GIST % id_gist
         return requests.get(url)
 
     def create_gist(self, payload):
@@ -145,7 +144,7 @@ class GithubFacade(object):
             whenever is public or private and, of course, file contents.
         """
 
-        url = self.ENDPOINT_GIST % (payload.identifier)
+        url = self.ENDPOINT_GIST % payload.identifier
         headers = {'Content-type': self.APPLICATION_JSON}
         data_json = json.dumps(payload, indent=2)
 
@@ -163,7 +162,7 @@ class GithubFacade(object):
         :param id_gist: identifier of the Gist to delete
         """
 
-        url = self.ENDPOINT_GIST % (id_gist)
+        url = self.ENDPOINT_GIST % id_gist
         if self.basic_auth:
             return requests.delete(url,
                                    auth=(self.username, self.credential))
@@ -174,13 +173,13 @@ class GithubFacade(object):
     def list_authorizations(self):
         """ List the authorizations for the given user. """
 
-        return requests.get(self.ENDPOINT_AUTH,
+        return requests.get(self.ENDPOINT_AUTH, verify=False,
                             auth=(self.username, self.credential))
 
     def fork_gist(self, gist_id):
         """ Requests to GitHub Gist API to fork a gist. """
 
-        url = self.ENDPOINT_FORK % (gist_id)
+        url = self.ENDPOINT_FORK % gist_id
         if self.basic_auth:
             return requests.post(url, auth=(self.username, self.credential))
         else:
@@ -190,7 +189,7 @@ class GithubFacade(object):
     def star_gist(self, gist_id):
         """ Requests to GitHub Gist API to star a gist. """
 
-        url = self.ENDPOINT_STAR % (gist_id)
+        url = self.ENDPOINT_STAR % gist_id
         if self.basic_auth:
             headers = {'Content-length': '0'}
             return requests.put(url, auth=(self.username, self.credential),
@@ -203,7 +202,7 @@ class GithubFacade(object):
     def unstar_gist(self, gist_id):
         """ Requests to GitHub Gist API to unstar a gist. """
 
-        url = self.ENDPOINT_STAR % (gist_id)
+        url = self.ENDPOINT_STAR % gist_id
         if self.basic_auth:
             return requests.delete(url, auth=(self.username, self.credential))
         else:
@@ -219,7 +218,7 @@ class GithubFacade(object):
         url = self.ENDPOINT_AUTH
         headers = {'Content-type': self.APPLICATION_JSON}
         data_json = json.dumps(payload, indent=2)
-        return requests.post(url, data=data_json, headers=headers,
+        return requests.post(url, data=data_json, verify=False, headers=headers,
                              auth=(self.username, self.credential))
 
 
@@ -235,7 +234,7 @@ class GistsConfigurer(object):
         it creates it empty.
         """
 
-        self.config = ConfigParser.ConfigParser()
+        self.config = ConfigParser()
         self.config_file_path = os.path.expanduser('~/.gistsrc')
         if os.path.exists(self.config_file_path):
             self.config.read(self.config_file_path)
@@ -252,7 +251,7 @@ class GistsConfigurer(object):
         """
 
         if not self.config.has_section('credentials'):
-            print literals.CONFIG_FILE_NOT_FOUND
+            print(literals.CONFIG_FILE_NOT_FOUND)
             return None
         username = self.config.get('credentials', 'user')
         return username
@@ -274,7 +273,7 @@ class GistsConfigurer(object):
         """
 
         if not self.config.has_section('credentials'):
-            print literals.CONFIG_FILE_NOT_FOUND
+            print(literals.CONFIG_FILE_NOT_FOUND)
             return None
         username = self.config.get('credentials', 'token')
         return username
@@ -300,15 +299,14 @@ def download(url, destination_dir, file_name, file_size):
     """
 
     destination_path = os.path.join(destination_dir, file_name)
-    print colored.green(literals.DOWNLOADING %
-                        (url, destination_path, file_size))
+    print(colored.green(literals.DOWNLOADING %
+                        (url, destination_path, file_size)))
 
     # Open the remote url as a file, read it and write it in
     # target directory
-    u = urllib2.urlopen(url)
+    u = requests.get(url)
     with open(destination_path, 'wb') as f:
-        raw_file = u.read()
-        f.write(raw_file)
+        f.write(u.content)
 
 
 def build_result(success, data, *args):
@@ -325,5 +323,5 @@ def build_result(success, data, *args):
     if not args:
         result.data = data
     else:
-        result.data = data % (args)
+        result.data = data % args
     return result

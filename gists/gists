@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from gists.gists import run
+from gists import run
 
 if __name__ == '__main__':
     run()

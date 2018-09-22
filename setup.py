@@ -12,17 +12,20 @@ def get_version():
     I'm toooooo lazy ...
     """
     basedir = os.path.dirname(__file__)
-    with open(os.path.join(basedir, 'gists/version.py')) as f:
-        VERSION = None
-        exec(f.read())
-        return VERSION
-    raise RuntimeError('No version info found.')
+    try:
+        with open(os.path.join(basedir, 'gists/version.py')) as f:
+            version = None
+            exec(f.read())
+            return version
+    except Exception:
+        raise RuntimeError('No version info found.')
 
-requirements = ['requests == 0.14.0', 'clint == 0.3.1']
+
+requirements = ['requests == 2.19.1', 'clint == 0.3.1', 'urllib3']
 if sys.version_info < (2, 7):
     requirements.append('argparse')
 elif sys.version_info < (2, 6):
-    raise 'Must use python 2.6 or greater'
+    raise Exception('Must use python 2.6 or greater')
 
 setup(name='gists',
       packages=['gists'],
@@ -38,13 +41,13 @@ setup(name='gists',
       license='MIT',
       test_suite='tests',
       classifiers=[
-           "Programming Language :: Python",
-           "Programming Language :: Python :: 2.6",
-           "Programming Language :: Python :: 2.7",
-           "Development Status :: 5 - Production/Stable ",
-           "Environment :: Console",
-           "Intended Audience :: Developers",
-           "License :: OSI Approved :: MIT License",
-           "Natural Language :: English",
-           "Operating System :: POSIX :: Linux"
+          "Programming Language :: Python",
+          "Programming Language :: Python :: 2.6",
+          "Programming Language :: Python :: 2.7",
+          "Development Status :: 5 - Production/Stable ",
+          "Environment :: Console",
+          "Intended Audience :: Developers",
+          "License :: OSI Approved :: MIT License",
+          "Natural Language :: English",
+          "Operating System :: POSIX :: Linux"
       ])

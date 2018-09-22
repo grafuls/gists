@@ -23,7 +23,7 @@
 gists.handlers
 ~~~~~~~~~~~~~~
 
-Handlers module contain all the fuctions that hanlde the input arguments from
+Handlers module contain all the functions that handle the input arguments from
 the command line, looking for incompatible arguments, and filling configuration
 data for the functions in 'actions' module.
 
@@ -49,7 +49,7 @@ def handle_list(args):
     else:
         username = config.getConfigUser()
     if not username:
-        print literals.USER_NOT_FOUND
+        print(literals.USER_NOT_FOUND)
         sys.exit()
 
     # If '--private' or '--starred' options, password becomes mandatory.
@@ -131,13 +131,13 @@ def get_credentials(args):
     Otherwise it will look for the authentication token in the configuration
     file
     """
-    if (args.user):
+    if args.user:
         credentials = getpass.getpass("Github password for user '%s': "
-                                      % (args.user))
+                                      % args.user)
     else:
         credentials = config.getConfigToken()
     if not credentials:
-        print literals.CREDENTIAL_NOT_FOUND
+        print(literals.CREDENTIAL_NOT_FOUND)
         sys.exit()
 
     return credentials

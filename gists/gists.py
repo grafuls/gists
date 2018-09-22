@@ -30,16 +30,16 @@ and coordinates the 'handlers'->'actions'->'formatters' execution workflow
 """
 
 import argparse
-from actions import (list_gists, show, get, post, delete, update, authorize,
-                     fork, star, unstar)
-from handlers import (handle_list, handle_show, handle_update,
-                      handle_authorize, handle_get, handle_post, handle_delete,
-                      handle_fork, handle_star)
-from formatters import (format_list, format_post, format_update,
-                        format_get, format_show, format_delete,
-                        format_authorize, format_star)
-from version import VERSION
 
+from actions import (list_gists, show, get, post, delete, update, authorize,
+                           fork, star, unstar)
+from formatters import (format_list, format_post, format_update,
+                              format_get, format_show, format_delete,
+                              format_authorize, format_star)
+from handlers import (handle_list, handle_show, handle_update,
+                            handle_authorize, handle_get, handle_post, handle_delete,
+                            handle_fork, handle_star)
+from version import VERSION
 
 USER_MSG = ("github username. Use this user instead of the defined one in "
             "the configuration file. If action demands authentication, a "
@@ -48,8 +48,7 @@ GIST_ID_MSG = ("identifier of the Gist. Execute 'gists list' to know Gists "
                "identifiers")
 
 
-def run(*args, **kwargs):
-
+def run():
     # Initialize argument's parser
     description = 'Manage Github gists from CLI'
     parser = argparse.ArgumentParser(description=description,
@@ -86,7 +85,7 @@ def run(*args, **kwargs):
     result_formatted = args.formatter(result)
 
     # Print the formatted output
-    print result_formatted
+    print(result_formatted)
 
 
 def __add_list_parser(subparsers):
@@ -109,7 +108,7 @@ def __add_list_parser(subparsers):
 
 
 def __add_show_parser(subparsers):
-    """ Define the subparser to handle with the 'show' functionallity.
+    """ Define the subparser to handle with the 'show' functionality.
 
     :param subparsers: the subparser entity
     """
@@ -216,7 +215,7 @@ def __add_delete_parser(subparsers):
 
 
 def __add_authorize_parser(subparsers):
-    """ Define the subparser to handle the 'authorize' functionallity.
+    """ Define the subparser to handle the 'authorize' functionality.
 
     :param subparsers: the subparser entity
     """
@@ -232,7 +231,7 @@ def __add_authorize_parser(subparsers):
 
 
 def __add_version_parser(subparsers):
-    """ Define the subparser to handle 'version' functionallity.
+    """ Define the subparser to handle 'version' functionality.
 
     :param subparsers: the subparser entity
     """
@@ -245,7 +244,7 @@ def __add_version_parser(subparsers):
 
 
 def __add_fork_parser(subparsers):
-    """ Define the subparser to handle 'fork' functionallity.
+    """ Define the subparser to handle 'fork' functionality.
 
     :param subparsers: the subparser entity
     """
@@ -259,7 +258,7 @@ def __add_fork_parser(subparsers):
 
 
 def __add_star_parser(subparsers):
-    """ Define the subparser to handle 'star' functionallity.
+    """ Define the subparser to handle 'star' functionality.
 
     :param subparsers: the subparser entity
     """
@@ -272,7 +271,7 @@ def __add_star_parser(subparsers):
 
 
 def __add_unstar_parser(subparsers):
-    """ Define the subparser to handle 'unstar' functionallity.
+    """ Define the subparser to handle 'unstar' functionality.
 
     :param subparsers: the subparser entity
     """

@@ -42,7 +42,7 @@ module, call to GitHub Gists API and manage the response.
 def list_gists(username, facade, want_starred):
     """ Retrieve the list of gists for a concrete user.
 
-    :param token: GitHub authentication token
+    :param username: GitHub authentication token
     :param facade: instance of the object that actually performs the request
     :param want_starred: if we want the starred ones
     """
@@ -54,15 +54,15 @@ def list_gists(username, facade, want_starred):
 
     if response.ok:
         # List of gists for the requested user found.
-        list_gists = []
-        for gist in response.json:
-            list_gists.append(model.Gist(gist))
+        _list_gists = []
+        for gist in response.json():
+            _list_gists.append(model.Gist(gist))
 
-        return build_result(True, list_gists)
+        return build_result(True, _list_gists)
     else:
         # GitHub response error. Parse the response
         return build_result(False, literals.LISTS_ERROR,
-                            response.json['message'])
+                            response.json()['message'])
 
 
 def get(gist_id, requested_file, destination_dir, facade):
@@ -84,7 +84,7 @@ def get(gist_id, requested_file, destination_dir, facade):
 
     if response.ok:
         # Gist file found. Parse it into a 'model.Gist' class.
-        gist_obj = model.Gist(response.json)
+        gist_obj = model.Gist(response.json())
         list_names = [gistfile.filename for gistfile in gist_obj.files]
 
         if len(gist_obj.files) == 1 and not requested_file:
@@ -121,7 +121,7 @@ def get(gist_id, requested_file, destination_dir, facade):
     else:
         # Handle GitHub response error
         result = build_result(False, literals.DOWNLOAD_ERROR,
-                              response.json['message'])
+                              response.json()['message'])
 
     return result
 
@@ -145,7 +145,7 @@ def show(gist_id, requested_file, facade):
 
     if response.ok:
         # Gist found. Parse the json response into the 'model.Gist' class
-        gist_obj = model.Gist(response.json)
+        gist_obj = model.Gist(response.json())
         if not requested_file:
             # Fill the response with the metadata of the gist
             result = build_result(True, gist_obj)
@@ -165,7 +165,7 @@ def show(gist_id, requested_file, facade):
     else:
         # GitHub response not ok. Parse the response
         result = build_result(False, literals.SHOW_ERROR,
-                              response.json['message'])
+                              response.json()['message'])
 
     return result
 
@@ -195,20 +195,20 @@ def post(public, upload_files, filepath, description, facade):
 
     for upfile in upload_files:
         # Prepare the content reading the file
-        gistFile = model.GistFile()
-        gistFile.filename = upfile
+        gist_file = model.GistFile()
+        gist_file.filename = upfile
         with open(os.path.join(filepath, upfile), 'r') as f:
             file_content = f.read()
-            gistFile.content = file_content
-        gist.addFile(gistFile)
+            gist_file.content = file_content
+        gist.addFile(gist_file)
 
     response = facade.create_gist(gist)
     # Parse the response
     if response.ok:
-        result = build_result(True, model.Gist(response.json))
+        result = build_result(True, model.Gist(response.json()))
     else:
-        if response.json:
-            result = build_result(False, response.json['message'])
+        if response.json():
+            result = build_result(False, response.json()['message'])
         else:
             result = build_result(False, literals.UNHANDLED_EXCEPTION)
     return result
@@ -227,8 +227,8 @@ def delete(gistid, facade):
     if response.ok:
 
         # Gist Found. Ask for confirmation
-        value_raw_input = (literals.DELETE_CONFIRMATION) % (gistid)
-        value = raw_input(value_raw_input)
+        value_raw_input = literals.DELETE_CONFIRMATION % gistid
+        value = input(value_raw_input)
         accepted_values_for_yes = ["y", "yes", "ofcourse", "ye"]
         if value.lower() in accepted_values_for_yes:
 
@@ -238,14 +238,14 @@ def delete(gistid, facade):
                 result = build_result(True, literals.DELETE_OK, gistid)
 
             else:
-                res_message = response.json['message']
+                res_message = response.json()['message']
                 result = build_result(False, literals.DELETE_NOK, res_message)
         else:
             # Aborted mission
             result = build_result(False, literals.DELETE_ABORTED)
     else:
         # Gist not retrieved.
-        res_message = response.json['message']
+        res_message = response.json()['message']
         result = build_result(False, literals.DELETE_NOK, res_message)
 
     return result
@@ -269,10 +269,10 @@ def update(gistid, description, filenames, filepath, new, remove, facade):
 
     if response.ok:
         # Gist found.
-        gist = model.Gist(response.json)
+        gist = model.Gist(response.json())
     else:
         result = build_result(False, literals.UPDATE_NOK,
-                              response.json['message'])
+                              response.json()['message'])
         return result
 
     if description:
@@ -288,12 +288,12 @@ def update(gistid, description, filenames, filepath, new, remove, facade):
                     return build_result(False, literals.UPDATE_RM_NF)
                 if new:
                     # Upload a new file to gist
-                    gistFile = model.GistFile()
-                    gistFile.filename = filename
+                    gist_file = model.GistFile()
+                    gist_file.filename = filename
                     with open(os.path.join(filepath, filename), 'r') as f:
                         file_content = f.read()
-                        gistFile.content = file_content
-                    gist.addFile(gistFile)
+                        gist_file.content = file_content
+                    gist.addFile(gist_file)
                 else:
                     # File not found and option --new it does not exist
                     return build_result(False, literals.UPDATE_NF)
@@ -317,9 +317,7 @@ def update(gistid, description, filenames, filepath, new, remove, facade):
         return build_result(True, gist)
     else:
         return build_result(False, literals.UPDATE_NOK,
-                            response.json['message'])
-
-    return result
+                            response.json()['message'])
 
 
 def authorize(facade):
@@ -331,7 +329,7 @@ def authorize(facade):
     # check if there is already an authorization for the app
     response = facade.list_authorizations()
     if response.ok:
-        for auth in response.json:
+        for auth in response.json():
             authorization = model.Authorization(auth)
             if authorization.note == literals.APP_NAME:
                 # write the token to the configuration file
@@ -341,7 +339,7 @@ def authorize(facade):
                 return build_result(True, authorization)
     else:
         return build_result(False, literals.AUTHORIZE_NOK,
-                            response.json['message'])
+                            response.json()['message'])
 
     # build the authorization request
     auth = model.Authorization()
@@ -352,7 +350,7 @@ def authorize(facade):
     response = facade.authorize(auth)
 
     if response.ok:
-        auth = model.Authorization(response.json)
+        auth = model.Authorization(response.json())
         result = build_result(True, auth)
 
         # write the token to the configuration file
@@ -361,7 +359,7 @@ def authorize(facade):
         configurer.setConfigToken(auth.token)
     else:
         result = build_result(False, literals.AUTHORIZE_NOK,
-                              response.json['message'])
+                              response.json()['message'])
 
     return result
 
@@ -369,17 +367,17 @@ def authorize(facade):
 def fork(gist_id, facade):
     """ Forks a gist.
 
-    :param gistid: identifier of the Gist to fork
+    :param gist_id: identifier of the Gist to fork
     :param facade: instance of the object that actually performs the request
     """
     response = facade.fork_gist(gist_id)
 
     if response.ok:
-        result = build_result(True, model.Gist(response.json))
+        result = build_result(True, model.Gist(response.json()))
     else:
-        if response.json:
+        if response.json():
             result = build_result(False, literals.FORK_ERROR, gist_id,
-                                  response.json['message'])
+                                  response.json()['message'])
         else:
             result = build_result(False, literals.UNHANDLED_EXCEPTION)
     return result
@@ -388,7 +386,7 @@ def fork(gist_id, facade):
 def star(gist_id, facade):
     """ Stars a gist.
 
-    :param gistid: identifier of the Gist to star
+    :param gist_id: identifier of the Gist to star
     :param facade: instance of the object that actually performs the request
     """
     response = facade.star_gist(gist_id)
@@ -397,7 +395,7 @@ def star(gist_id, facade):
         result = build_result(True, literals.STAR_OK, gist_id)
 
     else:
-        res_message = response.json['message']
+        res_message = response.json()['message']
         result = build_result(False, literals.STAR_NOK, res_message)
 
     return result
@@ -406,7 +404,7 @@ def star(gist_id, facade):
 def unstar(gist_id, facade):
     """ Unstars a gist.
 
-    :param gistid: identifier of the Gist to unstar
+    :param gist_id: identifier of the Gist to unstar
     :param facade: instance of the object that actually performs the request
     """
     response = facade.unstar_gist(gist_id)
@@ -415,7 +413,7 @@ def unstar(gist_id, facade):
         result = build_result(True, literals.UNSTAR_OK, gist_id)
 
     else:
-        res_message = response.json['message']
+        res_message = response.json()['message']
         result = build_result(False, literals.UNSTAR_NOK, res_message)
 
     return result

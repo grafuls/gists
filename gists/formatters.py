@@ -122,16 +122,19 @@ def format_list(result):
         list_of_gists = result.data
 
         # Calculate the number of columns of the current terminal window
-        rows, columns = os.popen('stty size', 'r').read().split()
+        rows_columns = os.popen('stty size', 'r').read()
+        columns = 2
+        if len(rows_columns) > 1:
+            rows, columns = rows_columns.split()
 
         # Set the header
-        gists_string = unicode(colored.cyan('-' * int(columns)) + "\n")
-        gists_string += unicode(colored.cyan("List of gists\n"))
-        gists_string += unicode(colored.cyan('-' * int(columns)) + "\n")
+        gists_string = str(colored.cyan('-' * int(columns)) + "\n")
+        gists_string += str(colored.cyan("List of gists\n"))
+        gists_string += str(colored.cyan('-' * int(columns)) + "\n")
 
         # Set the contents for each Gist listed
         for gist in list_of_gists:
-            gists_string += unicode(colored.green(gist.identifier + ": "))
+            gists_string += str(colored.green(gist.identifier + ": "))
             description = "(no desc)"
             if gist.description and gist.description != "":
                 description = gist.description
@@ -139,13 +142,13 @@ def format_list(result):
             gist_names = [gistfile.filename for
                           gistfile in gist.files]
             stringfiles = " [" + ", ".join(gist_names) + "]"
-            gists_string += unicode(colored.red(stringfiles))
+            gists_string += str(colored.red(stringfiles))
             if not gist.public:
                 gists_string += " (Private Gist) "
             gists_string += '\n'
 
         # Set the footer
-        gists_string += unicode(colored.cyan('-' * int(columns)) + "\n")
+        gists_string += str(colored.cyan('-' * int(columns)) + "\n")
 
         # Return the formatted String
         return gists_string
@@ -182,10 +185,10 @@ def __format_gist(gist):
 
     :param gist: :class: `Gist <Gist>` instance.
     """
-    url_title = unicode(colored.green('Url:\t\t'))
-    html_title = unicode(colored.green('Html Url:\t'))
-    public_title = unicode(colored.green('Private:\t'))
-    file_title = unicode(colored.green('Files:\t\t'))
+    url_title = str(colored.green('Url:\t\t'))
+    html_title = str(colored.green('Html Url:\t'))
+    public_title = str(colored.green('Private:\t'))
+    file_title = str(colored.green('Files:\t\t'))
 
     # Calculate the number of columns of the current terminal window
     rows, columns = os.popen('stty size', 'r').read().split()

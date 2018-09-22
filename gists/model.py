@@ -73,7 +73,7 @@ class Gist(dict):
     @property
     def files(self):
         """ Parse the 'self['files']' into GistFile objects. """
-        if not 'files' in self:
+        if 'files' not in self:
             self['files'] = {}
             return self['files']
         return [GistFile(self['files'][gistfile])
